@@ -16,7 +16,7 @@ Simply run the script, change the variables at the beggining if you want to post
 For the script to work, you need:
 * A valid installation of Python 3.X
 * [dlib](https://pypi.org/project/dlib/) and its python bindings
-* [The tained model](https://sourceforge.net/projects/dclib/postdownload)
+* [The trained model](https://sourceforge.net/projects/dclib/postdownload)
 * [OpenCV](https://opencv.org) and its python bindings
 * [NumPy](http://www.numpy.org/)
 * [Facebook python API](https://facebook-sdk.readthedocs.io/en/latest/install.html)
@@ -26,7 +26,7 @@ For the script to work, you need:
 ## Authors
 
 * Matthew Earl (original code)
-* Paulo Jarschel (me, modifications to get images from SPB and post to FB)
+* Paulo Jarschel (modifications to get images from SPB and post to FB)
 
 ## License
 
