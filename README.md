@@ -25,9 +25,8 @@ For the script to work, you need:
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* Matthew Earl (original code)
+* Paulo Jarschel (me, modifications to get images from SPB and post to FB)
 
 ## License
 
