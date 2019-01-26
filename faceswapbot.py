@@ -162,7 +162,7 @@ class FaceswapBot:
         self.swap1, self.swap2 = self.reload_swaps()
         self.finalim = self.fslib.get_one_image(self.swap1, self.swap2)
         fimpath = self.save_final_img(self.finalim)
-        comment = self.create_comment()
+        comment = self.create_comment(self.json1, self.json2)
 
         if post:
             self.post_to_fb(fimpath, comment)
