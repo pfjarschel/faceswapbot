@@ -114,11 +114,11 @@ class FaceswapBot:
             timestamp = files[0][:-7]
             j1 = json.dumps({})
             j2 = json.dumps({})
-            if os.path.isfile(bl_dir + "/%d_A.json" % timestamp) and \
-                    os.path.isfile(bl_dir + "/%d_B.json" % timestamp):
-                with open(bl_dir + "/%d_A.json" % timestamp) as f:
+            if os.path.isfile(bl_dir + "/%s_A.json" % timestamp) and \
+                    os.path.isfile(bl_dir + "/%s_B.json" % timestamp):
+                with open(bl_dir + "/%s_A.json" % timestamp) as f:
                     j1 = json.load(f)
-                with open(bl_dir + "/%d_B.json" % timestamp) as f:
+                with open(bl_dir + "/%s_B.json" % timestamp) as f:
                     j2 = json.load(f)
 
                 l1 = self.get_link_from_spb_json(j1)
@@ -134,8 +134,8 @@ class FaceswapBot:
                 if type(lm2) == bool:
                     return [False]
 
-                os.remove(bl_dir + "/%d_A.json" % timestamp)
-                os.remove(bl_dir + "/%d_B.json" % timestamp)
+                os.remove(bl_dir + "/%s_A.json" % timestamp)
+                os.remove(bl_dir + "/%s_B.json" % timestamp)
 
                 return [True, im1, im2, lm1, lm2, j1, j2]
 
