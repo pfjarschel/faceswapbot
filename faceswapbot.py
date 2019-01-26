@@ -156,8 +156,8 @@ class FaceswapBot:
     def run_bot(self, post=True, show=False, backlog=True):
         self.im1, self.im2, lm1, lm2, self.json1, self.json2 = self.ensure_faces_from_spb()
         self.save_jsons(self.json1, self.json2)
-        self.swap1 = self.fslib.swap(self.im1, self.im2, self.lm1, self.lm2)
-        self.swap2 = self.fslib.swap(self.im2, self.im1, self.lm2, self.lm1)
+        self.swap1 = self.fslib.swap(self.im1, self.im2, lm1, lm2)
+        self.swap2 = self.fslib.swap(self.im2, self.im1, lm2, lm1)
         self.save_swaps(self.swap1, self.swap2)
         self.swap1, self.swap2 = self.reload_swaps()
         self.finalim = self.fslib.get_one_image(self.swap1, self.swap2)
