@@ -381,7 +381,7 @@ print(sources_string)
 # But not before posting
 if post:
     token = ""
-    with open("token.txt", 'r') as file:
+    with open(script_dir + "/token.txt", 'r') as file:
         token = file.read().replace("\n", "")
     cfg = {
     "page_id"      : "faceswapbot",
