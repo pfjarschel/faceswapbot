@@ -23,6 +23,7 @@
 """
 Faceswap Bot
 """
+import sys
 import os
 import time
 import urllib
@@ -53,6 +54,7 @@ class FaceswapBot:
         self.script_dir = os.path.dirname(os.path.realpath(__file__))
         os.makedirs(self.script_dir + "/Images/Swaps", exist_ok=True)
         os.makedirs(self.script_dir + "/Images/Joined", exist_ok=True)
+        os.makedirs(self.script_dir + "/Images/Backlog", exist_ok=True)
         self.base_filename = self.script_dir + "/Images/Swaps/" + self.timestr
 
     def __del__(self):
@@ -62,8 +64,12 @@ class FaceswapBot:
         url = "https://www.shitpostbot.com/api/randsource"
         rawjson = urllib.request.urlopen(url).read().decode()
         spbjson = json.loads(rawjson)
-        imgurl = "http://www.shitpostbot.com/" + spbjson["sub"]["img"]["full"]
+        imgurl = self.get_link_from_spb_json(spbjson)
         return imgurl, spbjson
+
+    def get_link_from_spb_json(self, spbjson):
+        imgurl = "http://www.shitpostbot.com/" + spbjson["sub"]["img"]["full"]
+        return imgurl
 
     def ensure_faces_from_spb(self):
         l1, j1 = self.get_random_link_from_spb()
@@ -93,8 +99,50 @@ class FaceswapBot:
         return im1, im2, lm1, lm2, j1, j2
 
     def get_imgs_from_backlog(self):
-        # TO-DO
-        True
+        bl_dir = self.script_dir + "/Images/Backlog"
+
+        files = os.listdir(bl_dir)
+        dummy_files = files.copy()
+
+        if len(files) > 0:
+            for filename in dummy_files:
+                if ".json" not in filename:
+                    files.remove(filename)
+                    os.remove(bl_dir + "/" + filename)
+            del dummy_files
+
+            timestamp = files[0][:-7]
+            j1 = json.dumps({})
+            j2 = json.dumps({})
+            if os.path.isfile(bl_dir + "/%d_A.json" % timestamp) and \
+                    os.path.isfile(bl_dir + "/%d_B.json" % timestamp):
+                with open(bl_dir + "/%d_A.json" % timestamp) as f:
+                    j1 = json.load(f)
+                with open(bl_dir + "/%d_B.json" % timestamp) as f:
+                    j2 = json.load(f)
+
+                l1 = self.get_link_from_spb_json(j1)
+                l2 = self.get_link_from_spb_json(j2)
+
+                im1 = self.fslib.read_im_from_url(l1)
+                im2 = self.fslib.read_im_from_url(l2)
+
+                lm1 = self.fslib.get_landmarks(im1)
+                if type(lm1) == bool:
+                    return [False]
+                lm2 = self.fslib.get_landmarks(im2)
+                if type(lm2) == bool:
+                    return [False]
+
+                os.remove(bl_dir + "/%d_A.json" % timestamp)
+                os.remove(bl_dir + "/%d_B.json" % timestamp)
+
+                return [True, im1, im2, lm1, lm2, j1, j2]
+
+            else:
+                return [False]
+        else:
+            return [False]
 
     def manual_imgs(self, fnam1, fname2):
         # TO-DO
@@ -154,7 +202,15 @@ class FaceswapBot:
         api.put_comment(object_id=post['post_id'], message=com_str)
 
     def run_bot(self, post=True, show=False, backlog=True):
-        self.im1, self.im2, lm1, lm2, self.json1, self.json2 = self.ensure_faces_from_spb()
+        if backlog:
+            res = self.get_imgs_from_backlog()
+            if res[0] and len(res) > 6:
+                self.im1, self.im2, lm1, lm2, self.json1, self.json2 = \
+                    res[1], res[2], res[3], res[4], res[5], res[6]
+            else:
+                self.im1, self.im2, lm1, lm2, self.json1, self.json2 = self.ensure_faces_from_spb()
+        else:
+            self.im1, self.im2, lm1, lm2, self.json1, self.json2 = self.ensure_faces_from_spb()
         self.save_jsons(self.json1, self.json2)
         self.swap1 = self.fslib.swap(self.im1, self.im2, lm1, lm2)
         self.swap2 = self.fslib.swap(self.im2, self.im1, lm2, lm1)
@@ -171,4 +227,4 @@ class FaceswapBot:
 
 
 bot = FaceswapBot()
-bot.run_bot(False, True, True)
+bot.run_bot(True, False, True)
